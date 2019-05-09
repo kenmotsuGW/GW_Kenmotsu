@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sample</title>
+</head>
+<body>
+	<!-- action属性に送信先（サーブレット）のURLを指定 -->
+	<form action="third" method="post">
+		<h1>申し込み入力画面</h1>
+		<!-- フォームの入力内容を送信するボタン -->
+		<p>
+			お名前:<input type="text" name="param">
+		</p>
+		<p>
+			年齢:<select name="age">
+				<option value="10代">10代</option>
+				<option value="20代">20代</option>
+				<option value="30代">30代</option>
+				<option value="40代">40代</option>
+				<option value="50代">50代</option>
+				<option value="60代">60代</option>
+				<option value="70代">70代</option>
+			</select>
+		</p>
+
+		<p>
+			性別:<input type="radio" checked="checked" name="sei" value="男性">男性
+			<input type="radio" name="sei" value="女性"> 女性
+		</p>
+
+		<p>
+			興味のある言語:<input type="checkbox" value="Java" name="gengo1">Java
+			<input type="checkbox" value="PHP" name="gengo2">PHP <input
+				type="checkbox" value="C言語" name="gengo3">C言語
+		</p>
+
+		<table>
+			<tr>
+				<td>何か一言:</td>
+				<td><textarea name="hitokoto" cols="15" rows="5"></textarea></td>
+			</tr>
+		</table>
+
+		<!-- フォームの入力内容を送信するボタン -->
+		<input type="submit" value="送信">
+	</form>
+</body>
+</html>
