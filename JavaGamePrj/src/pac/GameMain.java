@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 public class GameMain extends JFrame {
 	public GameMain() {
 		// タイトルを設定
-		setTitle("プレイヤーの移動");
+		setTitle("ジャンプ");
 		// サイズ変更不可
 		setResizable(false);
 

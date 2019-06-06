@@ -2,37 +2,50 @@ package pac;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Point;
 
 import javax.swing.ImageIcon;
 
 public class Player {
-	// 方向定数
-	private static final int LEFT = 0;
-	private static final int RIGHT = 1;
-	private static final int UP = 2;
-	private static final int DOWN = 3;
+	// 幅
+	public static final int WIDTH = 64;
+	// 高さ
+	public static final int HEIGHT = 64;
+	// スピード
+	private static final int SPEED = 6;
+	// ジャンプ力
+	private static final int JUMP_SPEED = 24;
+	// 重力
+	private static final double GRAVITY = 2.0;
 
-	// 移動スピード
-	private static final int SPEED = 5;
+	// 位置
+	private double x;
+	private double y;
 
-	// プレイヤーの位置（x座標）
-	private int x;
-	// プレイヤーの位置（y座標）
-	private int y;
+	// 速度
+	private double vx;
+	private double vy;
+
 	// プレイヤーの幅
 	private int width;
 	// プレイヤーの高さ
 	private int height;
+
+	// 着地しているか
+	private boolean onGround;
+
 	// プレイヤーの画像
 	private Image image;
 
 	// メインパネルへの参照
 	private MainPanel panel;
 
-	public Player(int x, int y, MainPanel panel) {
+	public Player(double x, double y, MainPanel panel) {
 		this.x = x;
 		this.y = y;
+		vx = 0;
+		vy = 0;
+		onGround = false;
+
 		this.panel = panel;
 
 		// イメージをロード
@@ -40,21 +53,53 @@ public class Player {
 	}
 
 	/**
-	 * プレイヤーを移動する
-	 *
-	 * @param dir 移動方向
+	 * 停止する
 	 */
-	public void move(int dir) {
-		if (dir == LEFT) {
-			x -= SPEED;
-		} else if (dir == RIGHT) {
-			x += SPEED;
-		}else if (dir == UP) {
-			y -= SPEED;
-		}else if (dir == DOWN) {
-			y += SPEED;
-		}
+	public void stop() {
+		vx = 0;
+	}
 
+	/**
+	 * 左に加速する
+	 */
+	public void accelerateLeft() {
+		vx = -SPEED;
+	}
+
+	/**
+	 * 右に加速する
+	 */
+	public void accelerateRight() {
+		vx = SPEED;
+	}
+
+	/**
+	 * ジャンプする
+	 */
+	public void jump() {
+		if (onGround) {
+			// 上向きに速度を加える
+			vy = -JUMP_SPEED;
+			onGround = false;
+		}
+	}
+
+	/**
+	 * プレイヤーの状態を更新する
+	 */
+	public void update() {
+		// 重力で下向きに加速度がかかる
+		vy += GRAVITY;
+
+		// 速度を元に位置を更新
+		x += vx;
+		y += vy;
+		// 着地したか調べる
+		if (y > MainPanel.HEIGHT - height) {
+			vy = 0;
+			y = MainPanel.HEIGHT - height;
+			onGround = true;
+		}
 		// 画面の外に出ていたら中に戻す
 		if (x < 0) {
 			x = 0;
@@ -62,30 +107,6 @@ public class Player {
 		if (x > MainPanel.WIDTH - width) {
 			x = MainPanel.WIDTH - width;
 		}
-		if (y < 0) {
-			y = 0;
-		}
-		if (y > MainPanel.HEIGHT - height) {
-			y = MainPanel.HEIGHT - height;
-		}
-	}
-
-	/**
-	 * プレイヤーを描画する
-	 *
-	 * @param g 描画オブジェクト
-	 */
-	public void draw(Graphics g) {
-		g.drawImage(image, x, y, null);
-	}
-
-	/**
-	 * プレイヤーの位置を返す
-	 *
-	 * @return プレイヤーの位置座標
-	 */
-	public Point getPos() {
-		return new Point(x, y);
 	}
 
 	/**
@@ -104,6 +125,17 @@ public class Player {
 	 */
 	public int getHeight() {
 		return height;
+	}
+
+	/**
+	 * プレイヤーを描画
+	 *
+	 * @param g 描画オブジェクト
+	 */
+	public void draw(Graphics g) {
+		//g.setColor(Color.RED);
+		//g.fillRect((int) x, (int) y, WIDTH, HEIGHT);
+		g.drawImage(image, (int) x, (int) y, null);
 	}
 
 	/**

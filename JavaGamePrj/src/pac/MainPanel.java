@@ -10,23 +10,16 @@ import javax.swing.JPanel;
 
 public class MainPanel extends JPanel implements Runnable, KeyListener {
 	// パネルサイズ
-	public static final int WIDTH = 800;
-	public static final int HEIGHT = 640;
-
-	// 方向定数
-	private static final int LEFT = 0;
-	private static final int RIGHT = 1;
-	private static final int UP = 2;
-	private static final int DOWN = 3;
+	public static final int WIDTH = 640;
+	public static final int HEIGHT = 480;
 
 	// プレイヤー
 	private Player player;
 
-	// キーの状態（このキー状態を使ってプレイヤーを移動する）
-	private boolean leftPressed = false;
-	private boolean rightPressed = false;
-	private boolean upPressed = false;
-	private boolean downPressed = false;
+	// キーの状態（押されているか、押されてないか）
+	private boolean leftPressed;
+	private boolean rightPressed;
+	private boolean upPressed;
 
 	// ゲームループ用スレッド
 	private Thread gameLoop;
@@ -38,7 +31,7 @@ public class MainPanel extends JPanel implements Runnable, KeyListener {
 		setFocusable(true);
 
 		// プレイヤーを作成
-		player = new Player(WIDTH / 2, HEIGHT / 2, this);
+		player = new Player(0, HEIGHT - Player.HEIGHT, this);
 
 		// キーイベントリスナーを登録
 		addKeyListener(this);
@@ -52,19 +45,25 @@ public class MainPanel extends JPanel implements Runnable, KeyListener {
 	 * ゲームループ
 	 */
 	public void run() {
-
 		while (true) {
-			// 押されているキーに応じてプレイヤーを移動する
-			// 何も押されていないときは移動しない
 			if (leftPressed) {
-				player.move(LEFT);
+				// 左キーが押されていれば左向きに加速
+				player.accelerateLeft();
 			} else if (rightPressed) {
-				player.move(RIGHT);
-			} else if (upPressed) {
-				player.move(UP);
-			} else if (downPressed) {
-				player.move(DOWN);
+				// 右キーが押されていれば右向きに加速
+				player.accelerateRight();
+			} else {
+				// 何も押されてないときは停止
+				player.stop();
 			}
+
+			if (upPressed) {
+				// ジャンプする
+				player.jump();
+			}
+
+			// プレイヤーの状態を更新
+			player.update();
 
 			// 再描画
 			repaint();
@@ -94,9 +93,6 @@ public class MainPanel extends JPanel implements Runnable, KeyListener {
 		player.draw(g);
 	}
 
-	public void keyTyped(KeyEvent e) {
-	}
-
 	/**
 	 * キーが押されたらキーの状態を「押された」に変える
 	 *
@@ -111,11 +107,8 @@ public class MainPanel extends JPanel implements Runnable, KeyListener {
 		if (key == KeyEvent.VK_RIGHT) {
 			rightPressed = true;
 		}
-		if (key == KeyEvent.VK_UP) {
+		if (key == KeyEvent.VK_SPACE) {
 			upPressed = true;
-		}
-		if (key == KeyEvent.VK_DOWN) {
-			downPressed = true;
 		}
 	}
 
@@ -133,11 +126,11 @@ public class MainPanel extends JPanel implements Runnable, KeyListener {
 		if (key == KeyEvent.VK_RIGHT) {
 			rightPressed = false;
 		}
-		if (key == KeyEvent.VK_UP) {
+		if (key == KeyEvent.VK_SPACE) {
 			upPressed = false;
 		}
-		if (key == KeyEvent.VK_DOWN) {
-			downPressed = false;
-		}
+	}
+
+	public void keyTyped(KeyEvent e) {
 	}
 }
